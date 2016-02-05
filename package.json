@@ -1,0 +1,21 @@
+{
+  "name": "undebug",
+  "version": "0.0.0",
+  "description": "Remove [debug](`https://github.com/visionmedia/debug`) related code using an AST.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "author": "keik <k4t0.kei@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "deep-equal": "^1.0.1",
+    "escodegen": "^1.8.0",
+    "esprima": "^2.7.2",
+    "espurify": "^1.5.0",
+    "estraverse": "^4.1.1"
+  },
+  "devDependencies": {
+    "tape": "^4.4.0"
+  }
+}
