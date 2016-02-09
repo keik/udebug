@@ -12,10 +12,10 @@ test('undebug', function(t) {
   t.test('should remove requiring `debug`', function(t) {
 
     t.equal(undebug(fixture('./requiring.js')),
-            fixture('./requiring-expected.js').trim())
+            fixture('./requiring-expected.js'))
 
     t.equal(undebug(fixture('./call.js')),
-            fixture('./call-expected.js').trim())
+            fixture('./call-expected.js'))
 
     t.end()
   })

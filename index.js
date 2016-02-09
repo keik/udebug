@@ -1,3 +1,5 @@
+var d = require('debug')('undebug')
+
 var deepEqual  = require('deep-equal'),
     esprima    = require('esprima'),
     estraverse = require('estraverse'),
@@ -10,64 +12,105 @@ var declarationCode = 'require("debug")',
     a_requireDebugExp = espurify(a_body.expression)
 
 module.exports = function undebug(code) {
-  var ast = esprima.parse(code, {sourceType: 'module'})
-  var removee
-  var assignedIds = []
-debugger
+  var ast = esprima.parse(code, {sourceType: 'module'}),
+      removee,
+      origAssigned = {},
+      funcAssigned = {},
+      scopeLevel = 0
+
+  origAssigned[scopeLevel] = []
+  funcAssigned[scopeLevel] = []
+
+  var padding = ''
+
   estraverse.replace(ast, {
 
     enter: function(node, parent) {
-    },
+      d(padding += ' ', '[enter]', node.type, node.value || '*', node.name || '*')
 
-    leave: function(node, parent) {
-      console.log(node.type, node.value || '*', node.name || '*');
-      console.log(removee, assignedIds)
+      // matched with prototype
       if (deepEqual(espurify(node), a_requireDebugExp)) {
-        console.log('0-0')
-        removee = parent
-        console.log('aaa', parent.type);
-        if (parent.type === syntax.VariableDeclarator)
-          assignedIds.push(parent.id.name)
+        d('@@ match with prototype @@')
+        removee = node
         this.skip()
         return
       }
 
-      if (node === removee) {
-        if (node.type === syntax.CallExpression) {
-          console.log('0-1')
-          removee = parent
-          if (parent.type === syntax.VariableDeclarator)
-            assignedIds.push(parent.id.name)
+      switch (node.type) {
+
+      case syntax.BlockStatement:
+        scopeLevel++
+        origAssigned[scopeLevel] = []
+        funcAssigned[scopeLevel] = []
+        return
+
+      case syntax.CallExpression:
+
+        // matched with marked function identifier
+        if (funcAssigned[scopeLevel].indexOf(node.callee.name) > -1) {
+          d('@@ match with marked func identifier @@')
+          removee = node
           this.skip()
-        } else {
-          this.remove()
-          removee = null
+        }
+
+        // matched with marked module identifier
+        else if (origAssigned[scopeLevel].indexOf(node.callee.name) > -1) {
+          d('@@ match with marked orig identifier @@')
+          removee = node
+          this.skip()
         }
         return
-      }
 
-      if (node.type === syntax.VariableDeclaration
-          && node.declarations.length === 0) {
-        console.log(2)
-        this.remove()
-        removee = null
+      }
+    },
+
+    leave: function(node, parent) {
+      d((padding = padding.substr(1)) + ' ', '[leave]', node.type, node.value || '*', node.name || '*')
+
+      switch (node.type) {
+
+      case syntax.BlockStatement:
+        scopeLevel--
         return
+
+      case syntax.VariableDeclarator:
+
+        // module
+        if (node.init === removee) {
+          removee = node
+          origAssigned[scopeLevel].push(node.id.name)
+          d('@@ remove module @@')
+          this.remove()
+        }
+
+        // fn
+        else if (node.init.callee === removee) {
+          removee = node
+          funcAssigned[scopeLevel].push(node.id.name)
+          d('@@ remove fn @@')
+          this.remove()
+        }
+        return
+
+      case syntax.ExpressionStatement:
+        if (node.expression === removee
+            // for pattern `require('debug')('MYAPP')('message')`
+            || (node.expression && node.expression.callee && node.expression.callee.callee === removee)) {
+          d('@@ remove expression @@')
+          this.remove()
+        }
+        return
+
+      case syntax.VariableDeclaration:
+        // empty declaration
+        if (node.declarations.length === 0) {
+          this.remove()
+        }
+        return
+
       }
     }
-
   })
 
   return escodegen.generate(ast)
 }
-
-
-var code = `
-var d1 = require("debug")
-require('debug')('a')
-var d2 = require('debug')('a')
-var d3 = require("debug"),
-    fs = require('fs'),
-    d4 = require("debug"),
-    d5 = require("debug")('a')
-`
-console.log(module.exports(code))
