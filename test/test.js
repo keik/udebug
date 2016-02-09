@@ -5,19 +5,19 @@ var test = require('tape'),
       return read(path.join(__dirname, 'fixtures', f), 'utf8')
     }
 
-var undebug = require('../')
+var udebug = require('../')
 
-test('undebug', function(t) {
+test('udebug', function(t) {
 
   t.test('should remove requiring `debug`', function(t) {
 
-    t.equal(undebug(fixture('./requiring.js')),
+    t.equal(udebug(fixture('./requiring.js')),
             fixture('./requiring-expected.js'))
 
-    t.equal(undebug(fixture('./call.js')),
+    t.equal(udebug(fixture('./call.js')),
             fixture('./call-expected.js'))
 
-    t.equal(undebug(fixture('./scope.js')),
+    t.equal(udebug(fixture('./scope.js')),
             fixture('./scope-expected.js'))
 
     t.end()

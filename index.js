@@ -1,4 +1,4 @@
-var d = require('debug')('undebug')
+var d = require('debug')('udebug')
 
 var deepEqual  = require('deep-equal'),
     esprima    = require('esprima'),
@@ -11,7 +11,7 @@ var declarationCode = 'require("debug")',
     a_body = esprima.parse(declarationCode).body[0],
     a_requireDebugExp = espurify(a_body.expression)
 
-module.exports = function undebug(code) {
+module.exports = function udebug(code) {
   var ast = esprima.parse(code, {sourceType: 'module'}),
       removee,
       origAssigned = [[]],
