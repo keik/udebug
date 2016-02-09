@@ -17,6 +17,9 @@ test('undebug', function(t) {
     t.equal(undebug(fixture('./call.js')),
             fixture('./call-expected.js'))
 
+    t.equal(undebug(fixture('./scope.js')),
+            fixture('./scope-expected.js'))
+
     t.end()
   })
 })

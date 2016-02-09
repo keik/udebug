@@ -14,12 +14,8 @@ var declarationCode = 'require("debug")',
 module.exports = function undebug(code) {
   var ast = esprima.parse(code, {sourceType: 'module'}),
       removee,
-      origAssigned = {},
-      funcAssigned = {},
-      scopeLevel = 0
-
-  origAssigned[scopeLevel] = []
-  funcAssigned[scopeLevel] = []
+      origAssigned = [[]],
+      funcAssigned = [[]]
 
   var padding = ''
 
@@ -39,22 +35,21 @@ module.exports = function undebug(code) {
       switch (node.type) {
 
       case syntax.BlockStatement:
-        scopeLevel++
-        origAssigned[scopeLevel] = []
-        funcAssigned[scopeLevel] = []
+        origAssigned.push([])
+        funcAssigned.push([])
         return
 
       case syntax.CallExpression:
 
         // matched with marked function identifier
-        if (funcAssigned[scopeLevel].indexOf(node.callee.name) > -1) {
+        if (Array.prototype.concat.apply([], funcAssigned).indexOf(node.callee.name) > -1) {
           d('@@ match with marked func identifier @@')
           removee = node
           this.skip()
         }
 
         // matched with marked module identifier
-        else if (origAssigned[scopeLevel].indexOf(node.callee.name) > -1) {
+        else if (Array.prototype.concat.apply([], origAssigned).indexOf(node.callee.name) > -1) {
           d('@@ match with marked orig identifier @@')
           removee = node
           this.skip()
@@ -70,7 +65,8 @@ module.exports = function undebug(code) {
       switch (node.type) {
 
       case syntax.BlockStatement:
-        scopeLevel--
+        origAssigned.pop()
+        funcAssigned.pop()
         return
 
       case syntax.VariableDeclarator:
@@ -78,15 +74,15 @@ module.exports = function undebug(code) {
         // module
         if (node.init === removee) {
           removee = node
-          origAssigned[scopeLevel].push(node.id.name)
+          origAssigned[origAssigned.length - 1].push(node.id.name)
           d('@@ remove module @@')
           this.remove()
         }
 
         // fn
-        else if (node.init.callee === removee) {
+        else if (node.init && node.init.callee === removee) {
           removee = node
-          funcAssigned[scopeLevel].push(node.id.name)
+          funcAssigned[origAssigned.length - 1].push(node.id.name)
           d('@@ remove fn @@')
           this.remove()
         }
