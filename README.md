@@ -3,6 +3,13 @@
 Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code using an AST.
 
 
+# Install
+
+```
+npm install udebug
+```
+
+
 # Usage
 
 ## CLI
