@@ -1,0 +1,6 @@
+Usage: udebug <file> [options...]
+
+Options:
+
+    --outfile, -o  Write the debug striped code to this file.
+                   If unspecified, udebug prints to stdout.

@@ -7,10 +7,24 @@ Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code us
 
 ## CLI
 
-not yet implemented
+```
+udebug src.js
+```
+
+will print results to stdout, or output to the file with `-o` option:
+
+```
+udebug src.js -o dist.js
+```
+
+stdin are available:
+
+```
+echo 'var debug = require("debug")' | udebug
+```
 
 
-## Node
+## API
 
 ```js
 var udebug = require('udebug')
@@ -25,7 +39,7 @@ var code = [
   '}                            '
 ].join('\n')
 
-console.log(udebug(code))
+process.stdout.write(udebug(code))
 ```
 
 will output:

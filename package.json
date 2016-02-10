@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "description": "Remove [debug](`https://github.com/visionmedia/debug`) related code using an AST.",
   "main": "index.js",
+  "bin": "bin/cmd.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "lint": "eslint index.js bin/cmd.js",
+    "version": "npm run lint && npm run test"
   },
   "author": "keik <k4t0.kei@gmail.com>",
   "license": "MIT",
@@ -13,7 +16,8 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
     "espurify": "^1.5.0",
-    "estraverse": "^4.1.1"
+    "estraverse": "^4.1.1",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "debug": "^2.2.0",
