@@ -1,24 +1,9 @@
-var debug = require('debug')
-var d1    = debug('MYAPP')
-
-d1('hi')
-d2('hi') // should remain because of undefined
-d3('hi') // should remain because of undefined
-// ----
-
 var debug = require('debug'),
-    d2    = debug('MYAPP')
+    d1    = debug('MYAPP1'),
+    d2    = debug('MYAPP2')
 
-d1('hi')
-d2('hi')
-d3('hi') // should remain because of undefined
-
-// ----
-
-var d3 = require('debug')('MYAPP')
-
-d1('hi')
-d2('hi')
-d3('hi') // should remain because of undefined
-
-require('debug')('MYAPP')()
+d1('p1')
+d2('p2')
+debug('MYAPP3')('p3')
+require('debug')('MYAPP4')('p4')
+console.log('p5');

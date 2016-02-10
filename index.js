@@ -90,8 +90,10 @@ module.exports = function udebug(code) {
 
       case syntax.ExpressionStatement:
         if (node.expression === removee
+            // for pattern `require('debug')('MYAPP')`
+            || (node.expression && node.expression.callee && node.expression.callee === removee)
             // for pattern `require('debug')('MYAPP')('message')`
-            || (node.expression && node.expression.callee && node.expression.callee.callee === removee)) {
+            || (node.expression && node.expression.callee && node.expression.callee.callee &&  node.expression.callee.callee === removee)) {
           d('@@ remove expression @@')
           this.remove()
         }

@@ -1,3 +1,7 @@
 function a() {
+    d5('foo');
 }
-d1('bar');
+d3('bar');
+d4('bar');
+d5('bar');
+d4('baz');
