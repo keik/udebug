@@ -12,7 +12,7 @@ var declarationCode = 'require("debug")',
     a_requireDebugExp = espurify(a_body.expression)
 
 module.exports = function udebug(code) {
-  var ast = esprima.parse(code, {sourceType: 'module', attachComment: true}),
+  var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true}),
       removee,
       origAssigned = [[]],
       funcAssigned = [[]]
@@ -110,5 +110,6 @@ module.exports = function udebug(code) {
     }
   })
 
+  ast = estraverse.attachComments(ast, ast.comments, ast.tokens)
   return escodegen.generate(ast, {comment: true})
 }
