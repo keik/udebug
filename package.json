@@ -1,16 +1,30 @@
 {
   "name": "udebug",
   "version": "0.1.1",
-  "description": "Remove visionmedia/debug related code using an AST.",
+  "description": "Remove visionmedia/debug related code using AST.",
   "main": "index.js",
   "bin": "bin/cmd.js",
   "scripts": {
-    "test": "node test/test.js",
+    "test": "tape test/*.js",
     "lint": "eslint index.js bin/cmd.js",
     "version": "npm run lint && npm run test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keik/udebug.git"
+  },
   "author": "keik <k4t0.kei@gmail.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keik/udebug/issues"
+  },
+  "homepage": "https://github.com/keik/udebug#readme",
+  "keywords": [
+    "ast",
+    "debug",
+    "log",
+    "logger"
+  ],
   "dependencies": {
     "deep-equal": "^1.0.1",
     "debug": "^2.2.0",

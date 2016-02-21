@@ -12,17 +12,17 @@ function a() {
   d5('foo')
 }
 
-d1('bar')
-d2('bar')
-d3('bar') // should remain
-d4('bar') // should remain
-d5('bar') // should remain
+d1('bar1')
+d2('bar2')
+d3('bar3')
+d4('bar4')
+d5('bar5')
 
 var d3 = require('debug')('MYAPP3')
 var d5 = require('debug')('MYAPP5')
 
-d1('baz')
-d2('baz')
-d3('baz')
-d4('baz') // should remain
-d5('baz')
+d1('baz1')
+d2('baz2')
+d3('baz3')
+d4('baz4')
+d5('baz5')
