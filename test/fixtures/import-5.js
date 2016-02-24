@@ -1,2 +1,2 @@
 import fs from 'fs'
-import {log, formatArgs} from 'debug';
+import {log, formatArgs} from 'debug'

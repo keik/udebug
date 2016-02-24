@@ -35,12 +35,6 @@ module.exports = function udebug(code) {
       switch (node.type) {
 
       case syntax.ImportDeclaration:
-        d(node.source.value)
-
-        if (node.source.value === 'debug') {
-          removee = node
-          this.skip()
-        }
         return
 
       case syntax.BlockStatement:
@@ -74,8 +68,20 @@ module.exports = function udebug(code) {
       switch (node.type) {
 
       case syntax.ImportDeclaration:
-        if (node === removee)
+        if (node.source.value === 'debug') {
+          node.specifiers.forEach((specifier) => {
+            switch (specifier.type) {
+            case syntax.ImportDefaultSpecifier:
+              origAssigned[origAssigned.length - 1].push(specifier.local.name)
+              break
+            case syntax.ImportSpecifier:
+              funcAssigned[origAssigned.length - 1].push(specifier.local.name)
+              break
+            default:
+            }
+          })
           this.remove()
+        }
         return
 
       case syntax.BlockStatement:
