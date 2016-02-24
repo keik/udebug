@@ -6,7 +6,7 @@
   "bin": "bin/cmd.js",
   "scripts": {
     "test": "tape test/*.js",
-    "lint": "eslint index.js bin/cmd.js",
+    "lint": "eslint index.js bin/cmd.js test/**/*.js",
     "version": "npm run lint && npm run test"
   },
   "repository": {
@@ -35,7 +35,7 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^1.10.3",
+    "eslint": "^2.2.0",
     "tape": "^4.4.0"
   }
 }
