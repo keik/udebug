@@ -80,6 +80,7 @@ module.exports = function udebug(code) {
             default:
             }
           })
+          d('@@ remove import @@')
           this.remove()
         }
         return
