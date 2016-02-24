@@ -34,6 +34,15 @@ module.exports = function udebug(code) {
 
       switch (node.type) {
 
+      case syntax.ImportDeclaration:
+        d(node.source.value)
+
+        if (node.source.value === 'debug') {
+          removee = node
+          this.skip()
+        }
+        return
+
       case syntax.BlockStatement:
         origAssigned.push([])
         funcAssigned.push([])
@@ -63,6 +72,11 @@ module.exports = function udebug(code) {
       d((padding = padding.substr(1)) + ' ', '[leave]', node.type, node.value || '*', node.name || '*')
 
       switch (node.type) {
+
+      case syntax.ImportDeclaration:
+        if (node === removee)
+          this.remove()
+        return
 
       case syntax.BlockStatement:
         origAssigned.pop()
