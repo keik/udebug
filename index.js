@@ -59,6 +59,11 @@ module.exports = function udebug(code) {
         }
         return
 
+      case syntax.MemberExpression:
+        if (Array.prototype.concat.apply([], origAssigned).indexOf(node.object.name) > -1) {
+          removee = node
+        }
+        return
       }
     },
 
@@ -72,6 +77,7 @@ module.exports = function udebug(code) {
           node.specifiers.forEach((specifier) => {
             switch (specifier.type) {
             case syntax.ImportDefaultSpecifier:
+            case syntax.ImportNamespaceSpecifier:
               origAssigned[origAssigned.length - 1].push(specifier.local.name)
               break
             case syntax.ImportSpecifier:
@@ -109,6 +115,11 @@ module.exports = function udebug(code) {
         }
         return
 
+      case syntax.MemberExpression:
+        if (node.object === removee)
+          removee = node
+        return
+
       case syntax.ExpressionStatement:
         if (node.expression === removee
             // for pattern `require('debug')('MYAPP')`
@@ -123,6 +134,7 @@ module.exports = function udebug(code) {
       case syntax.VariableDeclaration:
         // empty declaration
         if (node.declarations.length === 0) {
+          d('@@ remove declaration @@')
           this.remove()
         }
         return
