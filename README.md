@@ -2,6 +2,8 @@
 
 Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code using AST.
 
+[![npm](https://nodei.co/npm/udebug.png)](https://npmjs.org/package/udebug)
+
 
 # Install
 
