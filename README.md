@@ -28,7 +28,7 @@ will print results to stdout, or output to the file with `-o` option:
 udebug src.js -o dist.js
 ```
 
-stdin are available:
+stdin is available:
 
 ```
 echo 'var debug = require("debug")' | udebug
