@@ -2,6 +2,8 @@
 
 Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code using AST.
 
+[![travis-ci](https://travis-ci.org/keik/udebug.svg?branch=master)](https://travis-ci.org/keik/udebug)
+
 [![npm](https://nodei.co/npm/udebug.png)](https://npmjs.org/package/udebug)
 
 
