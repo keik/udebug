@@ -22,6 +22,8 @@ test('udebug', function(t) {
             fixture('./require-5-expected.js'), 'require debug are removed (pattern 5)')
     t.equal(udebug(fixture('./require-6.js')),
             fixture('./require-6-expected.js'), 'require debug are removed (pattern 6)')
+    t.equal(udebug(fixture('./require-7.js')),
+            fixture('./require-7-expected.js'), 'require debug are removed (pattern 7)')
     t.end()
   })
 
@@ -47,7 +49,7 @@ test('udebug', function(t) {
     t.equal(udebug(fixture('./import-6.js')),
             fixture('./import-6-expected.js'), 'import debug are removed (pattern 6)')
     t.equal(udebug(fixture('./import-7.js')),
-            fixture('./import-7-expected.js'), 'import debug are removed (pattern 6)')
+            fixture('./import-7-expected.js'), 'import debug are removed (pattern 7)')
     t.end()
   })
 

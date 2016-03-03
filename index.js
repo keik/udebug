@@ -7,15 +7,10 @@ var deepEqual  = require('deep-equal'),
     escodegen  = require('escodegen'),
     syntax     = estraverse.Syntax
 
-var declarationCode = 'require("debug")',
-    a_body = esprima.parse(declarationCode).body[0],
-    a_requireDebugExp = espurify(a_body.expression)
-
 module.exports = function udebug(code) {
   var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true}),
       removee,
-      origAssigned = [[]],
-      funcAssigned = [[]]
+      assigned = [[]]
 
   var padding = ''
 
@@ -24,44 +19,34 @@ module.exports = function udebug(code) {
     enter: function(node, parent) {
       d(padding += ' ', '[enter]', node.type, node.value || '*', node.name || '*')
 
-      // matched with prototype
-      if (deepEqual(espurify(node), a_requireDebugExp)) {
-        d('@@ match with prototype @@')
-        removee = node
-        this.skip()
-        return
-      }
-
       switch (node.type) {
 
       case syntax.ImportDeclaration:
+        if (node.source.value === 'debug') {
+          removee = node
+          this.skip()
+        }
         return
 
       case syntax.BlockStatement:
-        origAssigned.push([])
-        funcAssigned.push([])
+        assigned.push([])
         return
 
       case syntax.CallExpression:
-
-        // matched with marked function identifier
-        if (Array.prototype.concat.apply([], funcAssigned).indexOf(node.callee.name) > -1) {
-          d('@@ match with marked func identifier @@')
+        if (node.callee.name === 'require'
+            && node.arguments[0] && node.arguments[0].value === 'debug')
           removee = node
-          this.skip()
-        }
-
-        // matched with marked module identifier
-        else if (Array.prototype.concat.apply([], origAssigned).indexOf(node.callee.name) > -1) {
-          d('@@ match with marked orig identifier @@')
-          removee = node
-          this.skip()
-        }
         return
 
-      case syntax.MemberExpression:
-        if (Array.prototype.concat.apply([], origAssigned).indexOf(node.object.name) > -1) {
-          removee = node
+      case syntax.Identifier:
+        if (Array.prototype.concat.apply([], assigned).indexOf(node.name) > -1) {
+          // parent node of marked identifer will be removed basically,
+          // except in the case that parent MemberExpression's root object is no-marked
+          if (parent.type === syntax.MemberExpression && parent.object) {
+            if (Array.prototype.concat.apply([], assigned).indexOf(parent.object.name) > -1)
+              removee = node
+          } else
+            removee = node
         }
         return
       }
@@ -69,80 +54,47 @@ module.exports = function udebug(code) {
 
     leave: function(node, parent) {
       d((padding = padding.substr(1)) + ' ', '[leave]', node.type, node.value || '*', node.name || '*')
+      if (node === removee) {
+        d('@@ remove' + node.type + ' @@')
+        this.remove()
+        switch(node.type) {
+        case syntax.ImportDeclaration:
+          node.specifiers.forEach((specifier) => {
+            assigned[assigned.length - 1].push(specifier.local.name)
+          })
+          break
+        case syntax.VariableDeclarator:
+          assigned[assigned.length - 1].push(node.id.name)
+          break
+        case syntax.AssignmentExpression:
+          assigned[assigned.length - 1].push(node.left.name)
+          removee = parent
+          break
+        case syntax.Identifier:
+        case syntax.CallExpression:
+        case syntax.MemberExpression:
+          removee = parent
+          break
+        }
+      }
 
       switch (node.type) {
 
-      case syntax.ImportDeclaration:
-        if (node.source.value === 'debug') {
-          node.specifiers.forEach((specifier) => {
-            switch (specifier.type) {
-            case syntax.ImportDefaultSpecifier:
-            case syntax.ImportNamespaceSpecifier:
-              origAssigned[origAssigned.length - 1].push(specifier.local.name)
-              break
-            case syntax.ImportSpecifier:
-              funcAssigned[origAssigned.length - 1].push(specifier.local.name)
-              break
-            default:
-            }
-          })
-          d('@@ remove import @@')
-          this.remove()
-        }
-        return
-
       case syntax.BlockStatement:
-        origAssigned.pop()
-        funcAssigned.pop()
-        return
-
-      case syntax.VariableDeclarator:
-
-        // module
-        if (node.init === removee) {
-          removee = node
-          origAssigned[origAssigned.length - 1].push(node.id.name)
-          d('@@ remove module @@')
-          this.remove()
-        }
-
-        // fn
-        else if (node.init && node.init.callee === removee) {
-          removee = node
-          funcAssigned[origAssigned.length - 1].push(node.id.name)
-          d('@@ remove fn @@')
-          this.remove()
-        }
-        return
-
-      case syntax.MemberExpression:
-        if (node.object === removee)
-          removee = node
-        return
-
-      case syntax.ExpressionStatement:
-        if (node.expression === removee
-            // for pattern `require('debug')('MYAPP')`
-            || (node.expression && node.expression.callee && node.expression.callee === removee)
-            // for pattern `require('debug')('MYAPP')('message')`
-            || (node.expression && node.expression.callee && node.expression.callee.callee &&  node.expression.callee.callee === removee)) {
-          d('@@ remove expression @@')
-          this.remove()
-        }
+        assigned.pop()
         return
 
       case syntax.VariableDeclaration:
         // empty declaration
         if (node.declarations.length === 0) {
-          d('@@ remove declaration @@')
+          d('@@ remove empty declaration @@')
           this.remove()
         }
         return
-
       }
     }
   })
 
   ast = estraverse.attachComments(ast, ast.comments, ast.tokens)
-  return escodegen.generate(ast, {comment: true})
+  return escodegen.generate(ast, {comment: true}) + '\n'
 }
