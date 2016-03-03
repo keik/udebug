@@ -5,8 +5,9 @@ var esprima    = require('esprima'),
     escodegen  = require('escodegen'),
     syntax     = estraverse.Syntax
 
-module.exports = function udebug(code) {
-  var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true}),
+module.exports = function udebug(code, filename) {
+
+  var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true, loc: true}),
       removee,
       assigned = [[]]
 
@@ -87,5 +88,12 @@ module.exports = function udebug(code) {
   })
 
   ast = estraverse.attachComments(ast, ast.comments, ast.tokens)
-  return escodegen.generate(ast, {comment: true}) + '\n'
+  var gen = escodegen.generate(ast, {
+    comment: true,
+    sourceMap: filename,
+    sourceMapWithCode: true,
+    sourceContent: code
+  })
+  gen.code += '\n'
+  return gen
 }

@@ -24,7 +24,7 @@ if (opts.h) {
 }
 
 if (process.stdin.isTTY && fileName) {
-  return out.write(udebug(fs.readFileSync(fileName)))
+  return out.write(udebug(fs.readFileSync(fileName), fileName).code)
 }
 else if (!process.stdin.isTTY) {
   var data = ''
@@ -34,7 +34,7 @@ else if (!process.stdin.isTTY) {
       while ((chunk = process.stdin.read()))
         data += chunk
     })
-    .on('end', () => out.write(udebug(data)))
+    .on('end', () => out.write(udebug(data, fileName).code))
 }
 else {
   help()
