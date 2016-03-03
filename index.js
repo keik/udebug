@@ -1,9 +1,7 @@
 var d = require('debug')('udebug')
 
-var deepEqual  = require('deep-equal'),
-    esprima    = require('esprima'),
+var esprima    = require('esprima'),
     estraverse = require('estraverse'),
-    espurify   = require('espurify'),
     escodegen  = require('escodegen'),
     syntax     = estraverse.Syntax
 
@@ -12,32 +10,28 @@ module.exports = function udebug(code) {
       removee,
       assigned = [[]]
 
-  var padding = ''
+  var _padding = '' // for logging
 
   estraverse.replace(ast, {
 
     enter: function(node, parent) {
-      d(padding += ' ', '[enter]', node.type, node.value || '*', node.name || '*')
+      d(_padding += ' ', '[enter]', node.type, node.value || '*', node.name || '*')
 
       switch (node.type) {
-
       case syntax.ImportDeclaration:
         if (node.source.value === 'debug') {
           removee = node
           this.skip()
         }
-        return
-
+        break
       case syntax.BlockStatement:
         assigned.push([])
-        return
-
+        break
       case syntax.CallExpression:
         if (node.callee.name === 'require'
             && node.arguments[0] && node.arguments[0].value === 'debug')
           removee = node
-        return
-
+        break
       case syntax.Identifier:
         if (Array.prototype.concat.apply([], assigned).indexOf(node.name) > -1) {
           // parent node of marked identifer will be removed basically,
@@ -48,12 +42,12 @@ module.exports = function udebug(code) {
           } else
             removee = node
         }
-        return
+        break
       }
     },
 
     leave: function(node, parent) {
-      d((padding = padding.substr(1)) + ' ', '[leave]', node.type, node.value || '*', node.name || '*')
+      d((_padding = _padding.substr(1)) + ' ', '[leave]', node.type, node.value || '*', node.name || '*')
       if (node === removee) {
         d('@@ remove' + node.type + ' @@')
         this.remove()
@@ -79,18 +73,15 @@ module.exports = function udebug(code) {
       }
 
       switch (node.type) {
-
       case syntax.BlockStatement:
         assigned.pop()
-        return
-
+        break
       case syntax.VariableDeclaration:
-        // empty declaration
         if (node.declarations.length === 0) {
           d('@@ remove empty declaration @@')
           this.remove()
         }
-        return
+        break
       }
     }
   })

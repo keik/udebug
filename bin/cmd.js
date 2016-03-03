@@ -10,7 +10,6 @@ var fs = require('fs'),
         default: {o: false, h: false}
       }),
     fileName = opts._[0],
-    cmd = opts.c,
     out = (typeof opts.o === 'string')
       ? fs.createWriteStream(opts.o).on('close', () => process.exit(1))
       : process.stdout
