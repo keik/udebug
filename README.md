@@ -1,10 +1,9 @@
 # udebug
 
+[![travis-ci](https://img.shields.io/travis/keik/udebug.svg?style=flat-square)](https://travis-ci.org/keik/udebug)
+[![npm-version](https://img.shields.io/npm/v/udebug.svg?style=flat-square)](https://npmjs.org/package/udebug)
+
 Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code using AST.
-
-[![travis-ci](https://travis-ci.org/keik/udebug.svg?branch=master)](https://travis-ci.org/keik/udebug)
-
-[![npm](https://nodei.co/npm/udebug.png)](https://npmjs.org/package/udebug)
 
 
 # Install
@@ -14,9 +13,7 @@ npm install udebug
 ```
 
 
-# Usage
-
-## CLI
+# CLI
 
 ```
 udebug src.js
@@ -28,15 +25,51 @@ will print results to stdout, or output to the file with `-o` option:
 udebug src.js -o dist.js
 ```
 
-stdin is available:
+and you can pass `-d` option to enable source map.
+
+Stdin is also available:
 
 ```
 echo 'var debug = require("debug")' | udebug
 ```
 
 
-## API
+# API
 
+```javascript
+var udebug = require('udebug')
+```
+
+
+## `udebug(code, opts)`Merge old source map and new source map and return merged.
+
+Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code from `code` using AST.
+
+<dl>
+  <dt>
+    <code>code</code> : <code>string</code>
+  </dt>
+  <dd>
+    target code
+  </dd>
+
+  <dt>
+    <code>opts.filepath</code> : <code>string</code>
+  </dt>
+  <dd>
+    filepath to attach source map
+  </dd>
+
+  <dt>
+    <code>opts.debug</code> : <code>boolean</code>
+  </dt>
+  <dd>
+    attach source map or not
+  </dd>
+</dl>
+
+
+# Example
 ```js
 var udebug = require('udebug')
 
@@ -50,7 +83,7 @@ var code = [
   '}                            '
 ].join('\n')
 
-process.stdout.write(udebug(code))
+process.stdout.write(udebug(code, {filepath: 'a.js', debug: true}))
 ```
 
 will output:
@@ -59,6 +92,7 @@ will output:
 function greet() {
     return 'hi';
 }
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImEuanMiXSwibmFtZXMiOlsiZ3JlZXQiXSwibWFwcGluZ3MiOiJBQUdBLFNBQVNBLEtBQVQsR0FBaUI7QUFBQSxJQUVmLE9BQU8sSUFBUCxDQUZlO0FBQUEiLCJzb3VyY2VzQ29udGVudCI6WyJ2YXIgZGVidWcgPSByZXF1aXJlKFwiZGVidWdcIiksXG4gICAgZCAgICAgPSBkZWJ1ZyhcIk1ZQVBQXCIpICAgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuZnVuY3Rpb24gZ3JlZXQoKSB7ICAgICAgICAgICBcbiAgZChcIiNncmVldCBjYWxsZWRcIikgICAgICAgICBcbiAgcmV0dXJuIFwiaGlcIiAgICAgICAgICAgICAgICBcbn0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIl19
 ```
 
 

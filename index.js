@@ -14,6 +14,7 @@ module.exports = udebug
  * @param {object} opts options
  * @param {string} opts.filepath filepath to attach source map
  * @param {boolean} opts.debug attach source map or not
+ * @returns {string} transformed code
  */
 function udebug(code, opts) {
 
