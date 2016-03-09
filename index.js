@@ -5,7 +5,15 @@ var esprima    = require('esprima'),
     escodegen  = require('escodegen'),
     syntax     = estraverse.Syntax
 
-module.exports = function udebug(code) {
+module.exports = udebug
+
+/**
+ * @param {string} code target code
+ * @param {object} opts options
+ * @param {string} opts.filepath filepath to attach source map
+ * @param {boolean} opts.debug attach source map or not
+ */
+function udebug(code, opts) {
   var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true}),
       removee,
       assigned = [[]]
