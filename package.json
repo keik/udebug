@@ -38,5 +38,11 @@
     "eslint": "^2.2.0",
     "source-map": "^0.5.3",
     "tape": "^4.4.0"
-  }
+  },
+  "files": [
+    "README.md",
+    "bin",
+    "index.js",
+    "package.json"
+  ]
 }
