@@ -6,8 +6,12 @@ var fs = require('fs'),
     opts = require('minimist')(
       process.argv.slice(2), {
         boolean: ['h', 'v'],
-        alias: {o: 'outfile', h: 'help', v: 'version'},
-        default: {o: false, h: false}
+        default: {h: false, v: false},
+        alias: {
+          o: 'outfile',
+          h: 'help',
+          v: 'version'
+        }
       }),
     fileName = opts._[0],
     out = (typeof opts.o === 'string')
