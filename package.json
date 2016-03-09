@@ -28,10 +28,8 @@
   "dependencies": {
     "convert-source-map": "^1.2.0",
     "debug": "^2.2.0",
-    "deep-equal": "^1.0.1",
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
-    "espurify": "^1.5.0",
     "estraverse": "^4.1.1",
     "merge-source-map": "^1.0.1",
     "minimist": "^1.2.0"
