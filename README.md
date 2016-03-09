@@ -41,7 +41,7 @@ var udebug = require('udebug')
 ```
 
 
-## `udebug(code, opts)`Merge old source map and new source map and return merged.
+## `udebug(code, opts)`
 
 Remove [visionmedia/debug](https://github.com/visionmedia/debug) related code from `code` using AST.
 
