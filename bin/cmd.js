@@ -19,30 +19,38 @@ var fs = require('fs'),
       ? fs.createWriteStream(opts.o).on('close', () => process.exit(1))
       : process.stdout
 
-if (opts.v) {
-  return process.stdout.write(
-    `udebug v${ require('../package.json').version }\n`)
-}
+main()
 
-if (opts.h) {
-  return help()
-}
+function main() {
+  if (opts.v) {
+    process.stdout.write(
+      `udebug v${ require('../package.json').version }\n`)
+    return
+  }
 
-if (process.stdin.isTTY && filepath) {
-  return out.write(udebug(fs.readFileSync(filepath, 'utf8'), {filepath: filepath, debug: opts.d}))
-}
-else if (!process.stdin.isTTY) {
-  var data = ''
-  return process.stdin
-    .on('readable', () => {
-      var chunk
-      while ((chunk = process.stdin.read()))
-        data += chunk
-    })
-    .on('end', () => out.write(udebug(data)))
-}
-else {
-  help()
+  if (opts.h) {
+    help()
+    return
+  }
+
+  if (process.stdin.isTTY && filepath) {
+    out.write(udebug(fs.readFileSync(filepath, 'utf8'), {
+      filepath: filepath,
+      debug: opts.d
+    }))
+  }
+  else if (!process.stdin.isTTY) {
+    var data = ''
+    process.stdin
+      .on('readable', () => {
+        var chunk
+        while ((chunk = process.stdin.read()))
+          data += chunk
+      })
+      .on('end', () => out.write(udebug(data)))
+  } else {
+    help()
+  }
 }
 
 function help() {
