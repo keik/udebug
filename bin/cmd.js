@@ -29,7 +29,7 @@ if (opts.h) {
 }
 
 if (process.stdin.isTTY && filepath) {
-  return out.write(udebug(fs.readFileSync(filepath), {filepath: filepath, debug: opts.d}))
+  return out.write(udebug(fs.readFileSync(filepath, 'utf8'), {filepath: filepath, debug: opts.d}))
 }
 else if (!process.stdin.isTTY) {
   var data = ''

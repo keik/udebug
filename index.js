@@ -3,7 +3,9 @@ var d = require('debug')('udebug')
 var esprima    = require('esprima'),
     estraverse = require('estraverse'),
     escodegen  = require('escodegen'),
-    syntax     = estraverse.Syntax
+    syntax     = estraverse.Syntax,
+    convert    = require('convert-source-map'),
+    merge      = require('merge-source-map')
 
 module.exports = udebug
 
@@ -14,8 +16,18 @@ module.exports = udebug
  * @param {boolean} opts.debug attach source map or not
  */
 function udebug(code, opts) {
-  var ast = esprima.parse(code, {sourceType: 'module', range: true, comment: true, tokens: true}),
-      removee,
+
+  opts = opts || {}
+
+  var ast = esprima.parse(code, {
+    sourceType: 'module',
+    range: true,
+    comment: true,
+    tokens: true,
+    loc: opts.debug
+  })
+
+  var removee,
       assigned = [[]]
 
   var _padding = '' // for logging
@@ -95,5 +107,17 @@ function udebug(code, opts) {
   })
 
   ast = estraverse.attachComments(ast, ast.comments, ast.tokens)
-  return escodegen.generate(ast, {comment: true}) + '\n'
+  var gen = escodegen.generate(ast, {
+    comment: true,
+    sourceMap: opts.debug && opts.filepath,
+    sourceContent: opts.debug && code,
+    sourceMapWithCode: true
+  })
+
+  var origMap = convert.fromSource(code) && convert.fromSource(code).toObject(),
+      newMap  = gen.map && gen.map.toString(),
+      mergedMap = merge(origMap, JSON.parse(newMap)),
+      mapComment = mergedMap ? convert.fromObject(mergedMap).toComment() : ''
+
+  return gen.code + '\n' + mapComment
 }
