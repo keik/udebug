@@ -5,12 +5,13 @@ var udebug = require('../')
 var fs = require('fs'),
     opts = require('minimist')(
       process.argv.slice(2), {
-        boolean: ['h', 'v'],
-        default: {h: false, v: false},
+        boolean: ['h', 'v', 'd'],
+        default: {h: false, v: false, d: 'debug'},
         alias: {
           o: 'outfile',
           h: 'help',
-          v: 'version'
+          v: 'version',
+          d: 'debug'
         }
       }),
     fileName = opts._[0],
