@@ -6,7 +6,7 @@ var fs = require('fs'),
     opts = require('minimist')(
       process.argv.slice(2), {
         boolean: ['h', 'v', 'd'],
-        default: {h: false, v: false, d: 'debug'},
+        default: {h: false, v: false, d: false},
         alias: {
           o: 'outfile',
           h: 'help',
