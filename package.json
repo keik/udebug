@@ -1,6 +1,6 @@
 {
   "name": "udebug",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Remove visionmedia/debug related code using AST.",
   "main": "index.js",
   "bin": "bin/cmd.js",
