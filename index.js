@@ -74,7 +74,7 @@ function udebug(code, opts) {
         this.remove()
         switch(node.type) {
         case syntax.ImportDeclaration:
-          node.specifiers.forEach((specifier) => {
+          node.specifiers.forEach(function(specifier) {
             assigned[assigned.length - 1].push(specifier.local.name)
           })
           break
