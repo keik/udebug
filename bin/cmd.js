@@ -14,7 +14,7 @@ var fs = require('fs'),
           d: 'debug'
         }
       }),
-    fileName = opts._[0],
+    filepath = opts._[0],
     out = (typeof opts.o === 'string')
       ? fs.createWriteStream(opts.o).on('close', () => process.exit(1))
       : process.stdout
@@ -28,8 +28,8 @@ if (opts.h) {
   return help()
 }
 
-if (process.stdin.isTTY && fileName) {
-  return out.write(udebug(fs.readFileSync(fileName)))
+if (process.stdin.isTTY && filepath) {
+  return out.write(udebug(fs.readFileSync(filepath), {filepath: filepath, debug: opts.d}))
 }
 else if (!process.stdin.isTTY) {
   var data = ''

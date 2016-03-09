@@ -4,3 +4,5 @@ Options:
 
     --outfile, -o  Write the debug striped code to this file.
                    If unspecified, udebug prints to stdout.
+      --debug, -d  Enable source maps that allow you to debug your files
+                   separately.
