@@ -15,3 +15,16 @@ console.log('p5')
 debug.log()
 debug.save()
 debug.load()
+
+if (true) d2('p3')
+
+if (true)
+  d2('p4')
+else
+  d2('p5')
+
+while (true) d2('p6')
+
+for (var i; i; i++) d2('p7')
+
+for (var k in this) d2('p8')

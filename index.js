@@ -97,9 +97,24 @@ function udebug(code, opts) {
       case syntax.BlockStatement:
         assigned.pop()
         break
+
       case syntax.VariableDeclaration:
         if (node.declarations.length === 0) {
-          d('@@ remove empty declaration @@')
+          d('@@ remove empty VariableDeclaration @@')
+          this.remove()
+        }
+        break
+      case syntax.IfStatement:
+        if (node.consequent == null) {
+          d('@@ remove empty IfStatement @@')
+          this.remove()
+        }
+        break
+      case syntax.WhileStatement:
+      case syntax.ForStatement:
+      case syntax.ForInStatement:
+        if (node.body == null) {
+          d('@@ remove empty WhileStatement or ForStatement @@')
           this.remove()
         }
         break
