@@ -32,7 +32,8 @@
     "esprima": "^2.7.2",
     "estraverse": "^4.1.1",
     "merge-source-map": "^1.0.1",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "remove-module": "^0.1.0"
   },
   "devDependencies": {
     "eslint": "^2.2.0",
